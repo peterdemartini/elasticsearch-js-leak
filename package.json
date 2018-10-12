@@ -1,0 +1,22 @@
+{
+    "name": "elasticsearch-js-leak",
+    "version": "1.0.0",
+    "main": "index.js",
+    "author": "peterdemartini <thepeterdemartini@gmail.com>",
+    "license": "MIT",
+    "dependencies": {
+        "elasticsearch": "^15.1.1",
+        "lodash": "^4.17.11",
+        "p-retry": "^2.0.0",
+        "pretty-bytes": "^5.1.0",
+        "uuid": "^3.3.2"
+    },
+    "devDependencies": {
+        "jest": "^23.6.0",
+        "leakage": "^0.4.0"
+    },
+    "scripts": {
+        "start": "node run.js",
+        "test": "jest --runInBand"
+    }
+}

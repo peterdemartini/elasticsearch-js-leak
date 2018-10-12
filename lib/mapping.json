@@ -1,0 +1,22 @@
+{
+    "settings" : {
+        "index.number_of_shards" : 5,
+        "index.number_of_replicas": 1
+    },
+    "mappings": {
+        "test": {
+            "_all": {
+                "enabled": false
+            },
+            "dynamic": false,
+            "properties": {
+                "testId": {
+                    "type": "keyword"
+                },
+                "data": {
+                    "type": "keyword"
+                }
+            }
+        }
+    }
+}
