@@ -7,6 +7,14 @@ See the [results](/RESULTS.md)
 
 ## Run the tests
 
+**Requirements:**
+  - node 8 or higher
+  - yarn or npm
+  - elasticsearch running on `localhost:9200`
+
+**IMPORTANT** this project will create a fresh index
+called `leakage` everytime the test is called.
+
 ```sh
 yarn test
 ```

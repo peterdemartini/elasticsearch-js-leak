@@ -5,8 +5,8 @@
 const prettyBytes = require('pretty-bytes');
 const SimpleClient = require('./lib/simple-client');
 
-const iterations = 15;
-const perRun = 100;
+const iterations = 10;
+const perRun = 500;
 const total = iterations * perRun;
 
 function memDiff(label) {
@@ -16,7 +16,7 @@ function memDiff(label) {
     return () => {
         const end = process.memoryUsage().rss;
         const diff = end - start;
-        console.log(`[info] ${label} end: ${prettyBytes(diff)} (+/-) --- ${prettyBytes(start)} total`);
+        console.log(`[info] ${label} end: ${prettyBytes(diff)} (+/-) --- ${prettyBytes(end)} total`);
     };
 }
 

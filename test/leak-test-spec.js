@@ -8,10 +8,10 @@ jest.setTimeout(60 * 1000);
 describe('Leak Test', () => {
     const client = new SimpleClient();
     const options = {
-        iterations: 10,
-        gcollections: 5,
+        iterations: 5,
+        gcollections: 2,
     };
-    const perRun = 10;
+    const perRun = 500;
     const total = options.iterations * options.gcollections * perRun;
 
     beforeAll(() => client.initialize());
