@@ -2,12 +2,14 @@
 
 /* eslint-disable no-console, no-restricted-syntax, no-await-in-loop */
 
+const { promisify } = require('util');
 const prettyBytes = require('pretty-bytes');
 const SimpleClient = require('./lib/simple-client');
 
 const iterations = 10;
 const perRun = 500;
 const total = iterations * perRun;
+const pDelay = promisify(setTimeout);
 
 function memDiff(label) {
     const start = process.memoryUsage().rss;
@@ -32,6 +34,7 @@ const runAll = async () => {
         const run = memDiff(`run ${i + 1}`);
         await client.run(perRun);
         run();
+        await pDelay(100);
     }
 
     all();

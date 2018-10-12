@@ -6,7 +6,6 @@
     "license": "MIT",
     "dependencies": {
         "elasticsearch": "^15.1.1",
-        "p-retry": "^2.0.0",
         "pretty-bytes": "^5.1.0",
         "uuid": "^3.3.2"
     },

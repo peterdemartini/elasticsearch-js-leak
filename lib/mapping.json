@@ -12,9 +12,6 @@
             "properties": {
                 "testId": {
                     "type": "keyword"
-                },
-                "data": {
-                    "type": "keyword"
                 }
             }
         }
