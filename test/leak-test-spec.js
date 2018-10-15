@@ -9,9 +9,9 @@ describe('Leak Test', () => {
     const client = new SimpleClient();
     const options = {
         iterations: 10,
-        gcollections: 3,
+        gcollections: 2,
     };
-    const perRun = 50;
+    const perRun = 100;
     const total = (options.iterations * options.gcollections * perRun) + (perRun);
 
     beforeEach(() => client.initialize());
@@ -29,7 +29,9 @@ describe('Leak Test', () => {
                             reject(err);
                             return;
                         }
-                        resolve();
+                        setTimeout(() => {
+                            resolve();
+                        }, 500);
                     });
                 }), options);
                 await result.printSummary();
@@ -50,7 +52,12 @@ describe('Leak Test', () => {
             let err;
 
             try {
-                const result = await iterate.async(() => client.runAsync(perRun), options);
+                const result = await iterate.async(async () => {
+                    await client.runAsync(perRun);
+                    await new Promise((resolve) => {
+                        setTimeout(() => { resolve(); }, 500);
+                    });
+                }, options);
                 await result.printSummary();
             } catch (_err) {
                 err = _err;
