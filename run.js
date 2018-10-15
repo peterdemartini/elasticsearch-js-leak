@@ -1,46 +1,47 @@
 'use strict';
 
-/* eslint-disable no-console, no-restricted-syntax, no-await-in-loop */
+/* eslint-disable no-console */
 
 const timesSeries = require('neo-async/timesSeries');
-const prettyBytes = require('pretty-bytes');
 const SimpleClient = require('./lib/simple-client');
+const { memDiff } = require('./lib/utils');
 
 const iterations = 10;
 const perRun = 500;
 const total = iterations * perRun;
 
-function memDiff(label) {
-    const start = process.memoryUsage().rss;
-    console.log(`[info] ${label} start: ${prettyBytes(start)} total`);
-
-    return () => {
-        const end = process.memoryUsage().rss;
-        const diff = end - start;
-        console.log(`[info] ${label} end: ${prettyBytes(diff)} (+/-) --- ${prettyBytes(end)} total`);
-    };
-}
-
 const runAll = (cb) => {
-    console.log(`[info] creating ${total} records...`);
+    console.log(`[info] creating ${total} records... (using callbacks)`);
 
     const client = new SimpleClient();
     client.initialize()
-        .then(() => {
-            const all = memDiff('all');
+        .then(() => memDiff('all'))
+        .then((all) => {
             timesSeries(iterations, (i, done) => {
-                const run = memDiff(`run ${i + 1}`);
-                client.run(perRun, (err) => {
-                    run();
-                    setTimeout(() => {
-                        done(err);
-                    }, 100);
+                memDiff(`run ${i + 1}`).then((run) => {
+                    client.run(perRun, (err) => {
+                        if (err) {
+                            done(err);
+                            return;
+                        }
+                        run()
+                            .then(() => {
+                                done();
+                            })
+                            .catch((statErr) => {
+                                done(statErr);
+                            });
+                    });
                 });
             }, (err) => {
-                all();
-                client.printStats()
+                if (err) {
+                    cb(err);
+                    return;
+                }
+                all()
+                    .then(() => client.printStats())
                     .then((statErr) => {
-                        cb(err || statErr);
+                        cb(statErr);
                     });
             });
         });
@@ -49,7 +50,5 @@ const runAll = (cb) => {
 runAll((err) => {
     if (err) {
         console.error(err);
-        process.exit(1);
     }
-    process.exit(0);
 });
