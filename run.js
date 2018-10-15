@@ -2,14 +2,13 @@
 
 /* eslint-disable no-console, no-restricted-syntax, no-await-in-loop */
 
-const { promisify } = require('util');
+const timesSeries = require('neo-async/timesSeries');
 const prettyBytes = require('pretty-bytes');
 const SimpleClient = require('./lib/simple-client');
 
 const iterations = 10;
 const perRun = 500;
 const total = iterations * perRun;
-const pDelay = promisify(setTimeout);
 
 function memDiff(label) {
     const start = process.memoryUsage().rss;
@@ -22,24 +21,35 @@ function memDiff(label) {
     };
 }
 
-const runAll = async () => {
+const runAll = (cb) => {
     console.log(`[info] creating ${total} records...`);
 
     const client = new SimpleClient();
-    await client.initialize();
-
-    const all = memDiff('all');
-
-    for (let i = 0; i < iterations; i += 1) {
-        const run = memDiff(`run ${i + 1}`);
-        await client.run(perRun);
-        run();
-        await pDelay(100);
-    }
-
-    all();
-
-    await client.printStats();
+    client.initialize()
+        .then(() => {
+            const all = memDiff('all');
+            timesSeries(iterations, (i, done) => {
+                const run = memDiff(`run ${i + 1}`);
+                client.run(perRun, (err) => {
+                    run();
+                    setTimeout(() => {
+                        done(err);
+                    }, 100);
+                });
+            }, (err) => {
+                all();
+                client.printStats()
+                    .then((statErr) => {
+                        cb(err || statErr);
+                    });
+            });
+        });
 };
 
-runAll().catch(err => console.error(err));
+runAll((err) => {
+    if (err) {
+        console.error(err);
+        process.exit(1);
+    }
+    process.exit(0);
+});
