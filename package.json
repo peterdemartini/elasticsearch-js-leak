@@ -9,6 +9,7 @@
         "heapdump": "^0.3.9",
         "neo-async": "^2.6.0",
         "pretty-bytes": "^5.1.0",
+        "pretty-ms": "^4.0.0",
         "uuid": "^3.3.2"
     },
     "devDependencies": {

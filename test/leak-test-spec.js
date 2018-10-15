@@ -29,9 +29,7 @@ describe('Leak Test', () => {
                             reject(err);
                             return;
                         }
-                        setTimeout(() => {
-                            resolve();
-                        }, 500);
+                        resolve();
                     });
                 }), options);
                 await result.printSummary();
@@ -54,9 +52,6 @@ describe('Leak Test', () => {
             try {
                 const result = await iterate.async(async () => {
                     await client.runAsync(perRun);
-                    await new Promise((resolve) => {
-                        setTimeout(() => { resolve(); }, 500);
-                    });
                 }, options);
                 await result.printSummary();
             } catch (_err) {
